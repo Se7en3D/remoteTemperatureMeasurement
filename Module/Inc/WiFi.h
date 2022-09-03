@@ -103,6 +103,7 @@ void WiFiAddDataFromUART(WiFiClass *this,uint8_t *pData);
 void WiFiIncreaseSysTick(WiFiClass *this);
 void WiFiClearCommandBuffor(WiFiClass *this);
 void WiFiDecodeErrorCode(WiFiClass *this,uint8_t *code);
+uint8_t WiFiIsInicialized(WiFiClass *this);
 volatile static const WiFiStates (*WiFiStateFunctionArrayWiFiEvents[])(WiFiClass *)={
 		WiFiStateFunctionIdle,
 		WiFiCheckCHIPSTATUS,

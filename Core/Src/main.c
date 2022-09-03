@@ -28,7 +28,14 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+volatile uint8_t huart4RxData;
+volatile WiFiClass *wiFiClass;
 
+int _write(int file, char *ptr, int len){
+	wiFiClass->sendData(wiFiClass,ptr,len);
+
+	return len;
+}
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -50,8 +57,7 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 
 /* USER CODE BEGIN PV */
-volatile uint8_t huart4RxData;
-volatile WiFiClass *wiFiClass;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,6 +121,10 @@ int main(void)
   HAL_UART_Receive_IT(&huart4,&huart4RxData, sizeof(huart4RxData));
   HAL_TIM_Base_Start_IT(&htim10);
   HAL_TIM_Base_Start_IT(&htim11);
+  while(WiFiIsInicialized(wiFiClass)){
+	  WiFiMainFunction(wiFiClass);
+  }
+  printf("Wifi module is initialized\n");
   ds18b20 *tempSensor=ds18b20CreateClass(&huart5);
   tempSensor->initialization(tempSensor);
 
@@ -400,7 +410,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, WIFIESP8266GPIO0_Pin|WIFIESP8266GPIO2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin
+                          |oneWire_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : CS_I2C_SPI_Pin */
   GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
@@ -453,6 +464,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(VBUS_FS_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : oneWire_Pin */
+  GPIO_InitStruct.Pin = oneWire_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(oneWire_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
   GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -479,9 +497,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		wiFiClass->increaseSysTick(wiFiClass);
 	}
 	if(htim==&htim11){
-		uint8_t data[]="Hello World\r\n";
-		uint32_t sizeData=sizeof(data);
-		wiFiClass->sendData(wiFiClass,&data[0],sizeData);
+		//uint8_t data[]="Hello World\r\n";
+		//uint32_t sizeData=sizeof(data);
+		//wiFiClass->sendData(wiFiClass,&data[0],sizeData);
 	}
 }
 /* USER CODE END 4 */

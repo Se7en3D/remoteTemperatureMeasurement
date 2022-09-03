@@ -97,6 +97,8 @@ WiFiStates WiFiCheckCHIPSTATUS(WiFiClass *this){
 				pointerToChar=strstr(answer,((uint8_t*)":"));
 				pointerToChar++;
 				switch(*pointerToChar){
+				case '1':
+					state=WiFiStateConnectToRouter;
 				case '2':
 					state=WiFiStateConnectToTCPServer;
 					break;
@@ -430,5 +432,12 @@ void WiFiDecodeErrorCode(WiFiClass *this,uint8_t *code){
 			break;
 		}
 		break;
+	}
+}
+uint8_t WiFiIsInicialized(WiFiClass *this){
+	if(this->eStateMachine==WiFiStateInitialized){
+		return 0;
+	}else{
+		return 1;
 	}
 }

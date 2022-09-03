@@ -36,9 +36,13 @@ void OneWireWriteBit(UART_HandleTypeDef *huart,uint8_t value){
 uint8_t OneWireReadBit(UART_HandleTypeDef *huart){
 	  uint8_t data_out = 0xFF;
 	  uint8_t data_in = 0;
+	  while(__HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE) == SET) {
+		  uint8_t tempBuffer;
+		  HAL_UART_Receive(huart, &tempBuffer, 1, HAL_MAX_DELAY);
+	  }
 	  HAL_UART_Transmit(huart, &data_out, 1, HAL_MAX_DELAY);
 	  HAL_UART_Receive(huart, &data_in, 1, HAL_MAX_DELAY);
-
+	  //printf("Read data %x\n",data_in);
 	  return data_in & 0x01;
 }
 void OneWireSetBaudrate(UART_HandleTypeDef *huart,uint32_t baudrate){
