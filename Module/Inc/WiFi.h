@@ -80,7 +80,7 @@ WiFiClass *wiFiCreateClass(UART_HandleTypeDef *huart);
 
 void setWiFiFunction(WiFiClass  *this,
 		WiFiEvents (*getState)(WiFiClass *),
-		void (*increaseSysTick)(WiFiClass *),
+		void (*increaseTimer)(WiFiClass *),
 		void (*sendData)(WiFiClass *,uint8_t*,uint32_t)
 		);
 void WiFiMainFunction(WiFiClass  *this);
@@ -98,8 +98,8 @@ WiFiStates WiFiStateFunctionStopSendMode(WiFiClass *this);
 WiFiEvents WifiGetState(WiFiClass *this);
 void WiFiSendData(WiFiClass *this,uint8_t* data,uint32_t size);
 uint8_t* WiFiGetCommand(WiFiClass *this);
-void WiFiSendCommand(uint8_t *pData, uint16_t Size);
-void WiFiAddDataFromUART(WiFiClass *this,uint8_t *pData);
+void WiFiSendCommand(const volatile uint8_t *pData, uint16_t Size);
+void WiFiAddDataFromUART(WiFiClass *this,const volatile uint8_t *pData);
 void WiFiIncreaseSysTick(WiFiClass *this);
 void WiFiClearCommandBuffor(WiFiClass *this);
 void WiFiDecodeErrorCode(WiFiClass *this,uint8_t *code);

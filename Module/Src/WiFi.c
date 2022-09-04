@@ -383,13 +383,13 @@ uint8_t* WiFiGetCommand(WiFiClass *this){
 	memcpy ( answer, &tempBuffer[0],number );
 	return answer;
 }
-void WiFiSendCommand(uint8_t *pData, uint16_t Size){
+void WiFiSendCommand(const volatile uint8_t *pData, uint16_t Size){
 	if(WiFiHuart!=NULL){
 		HAL_UART_Transmit_IT((UART_HandleTypeDef *)WiFiHuart, pData, Size);
 	}
 }
 
-void WiFiAddDataFromUART(WiFiClass *this,uint8_t *pData){
+void WiFiAddDataFromUART(WiFiClass *this, const volatile uint8_t *pData){
 	if(*pData=='\n'){
 		this->eStateMachineEvent=WiFiEventCommandAnswer;
 		this->commandInBuffor++;

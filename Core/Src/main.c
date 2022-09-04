@@ -51,7 +51,6 @@ int _write(int file, char *ptr, int len){
 ADC_HandleTypeDef hadc1;
 
 TIM_HandleTypeDef htim10;
-TIM_HandleTypeDef htim11;
 
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
@@ -66,7 +65,6 @@ static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_TIM10_Init(void);
-static void MX_TIM11_Init(void);
 static void MX_UART5_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
@@ -109,7 +107,6 @@ int main(void)
   MX_ADC1_Init();
   MX_UART4_Init();
   MX_TIM10_Init();
-  MX_TIM11_Init();
   MX_UART5_Init();
 
   /* Initialize interrupts */
@@ -120,7 +117,6 @@ int main(void)
   wiFiClass=wiFiCreateClass(&huart4);
   HAL_UART_Receive_IT(&huart4,&huart4RxData, sizeof(huart4RxData));
   HAL_TIM_Base_Start_IT(&htim10);
-  HAL_TIM_Base_Start_IT(&htim11);
   while(WiFiIsInicialized(wiFiClass)){
 	  WiFiMainFunction(wiFiClass);
   }
@@ -136,13 +132,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)  {
 	  WiFiMainFunction(wiFiClass);
-	  /*
-	  dataTemp=0xEC;
-	  	  for(int i=0;i<sizeof(uint8_t)*8;i++){
-	  		  writebit(&huart5,dataTemp&0x01);
-	  		dataTemp=dataTemp>>1;
-	  	  }
-	  HAL_Delay(100);*/
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -185,7 +174,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
@@ -274,9 +263,9 @@ static void MX_TIM10_Init(void)
 
   /* USER CODE END TIM10_Init 1 */
   htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 23 ;
+  htim10.Init.Prescaler = 0;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 9999;
+  htim10.Init.Period = 25000 ;
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
@@ -286,37 +275,6 @@ static void MX_TIM10_Init(void)
   /* USER CODE BEGIN TIM10_Init 2 */
 
   /* USER CODE END TIM10_Init 2 */
-
-}
-
-/**
-  * @brief TIM11 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM11_Init(void)
-{
-
-  /* USER CODE BEGIN TIM11_Init 0 */
-
-  /* USER CODE END TIM11_Init 0 */
-
-  /* USER CODE BEGIN TIM11_Init 1 */
-
-  /* USER CODE END TIM11_Init 1 */
-  htim11.Instance = TIM11;
-  htim11.Init.Prescaler = 23999;
-  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim11.Init.Period = 10000 ;
-  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM11_Init 2 */
-
-  /* USER CODE END TIM11_Init 2 */
 
 }
 
@@ -495,11 +453,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim==&htim10){
 		wiFiClass->increaseSysTick(wiFiClass);
-	}
-	if(htim==&htim11){
-		//uint8_t data[]="Hello World\r\n";
-		//uint32_t sizeData=sizeof(data);
-		//wiFiClass->sendData(wiFiClass,&data[0],sizeData);
 	}
 }
 /* USER CODE END 4 */
