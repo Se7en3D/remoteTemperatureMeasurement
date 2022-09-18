@@ -35,27 +35,21 @@ private:
 		ds18b20_12bitResolution,
 	};
 
-	enum ds18b20States{
-		ds18b20_Uninitialized,
-		ds18b20_Initialized,
-		ds18b20_StartConversion,
-		ds18b20_WaitingForTimer,
-		ds18b20_ReadyToReadTemp
-	};
-
 	struct ds18b20Config{
 		uint8_t romNO[DS18B20_ROM_SIZE];
 		uint8_t scratchpad[DS18B20_SCRATCHPAD_SIZE];
 		int temperature;
+		int decodedTemp;
 		ds18b20resolution resolution;
-		ds18b20States state;
 		uint32_t timer;
+		bool conversion;
 	};
 
 	TempSensComms *tempSensComms;
 	std::vector<ds18b20Config> configs;
 	uint8_t CalcCRC(uint8_t *data,uint8_t size);
 	void readScratchpad(ds18b20Config *config);
+	void decodeTemp(ds18b20Config *config);
 public:
 	DS18B20();
 	virtual ~DS18B20();

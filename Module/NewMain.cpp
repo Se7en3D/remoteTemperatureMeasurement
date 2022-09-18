@@ -23,6 +23,7 @@
 
 DS18B20 *ds18b20;
 volatile bool startFlag=false;
+volatile uint32_t time=0;
 
 int _write(int file, char *ptr, int len){
 	//wiFiClass->sendData((WiFiClass*)wiFiClass,(uint8_t *)ptr,len);
@@ -33,6 +34,7 @@ int _write(int file, char *ptr, int len){
 
 
 void newMain(){
+		//Setup
 	  OneWire *oneWire=new OneWire();
 	  oneWire->InterfaceSet(&huart5);
 	  ds18b20=new DS18B20();
@@ -41,6 +43,15 @@ void newMain(){
 	  ds18b20->StartOfMeasurment();
 	  HAL_TIM_Base_Start_IT(&htim10);
 	  HAL_TIM_Base_Start_IT(&htim11);
+
+	  	  //Loop
+	  while(true){
+		  if(time>=10){
+			  time=0;
+			  ds18b20->StartOfMeasurment();
+		  }
+		  ds18b20->GetTempValue();
+	  }
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
@@ -50,10 +61,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	}
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+		//1 ms
 	if(htim==&htim10){
+		ds18b20->TimeHandler();
 		//wiFiClass->increaseSysTick(wiFiClass);
 	}
+		//1 sekunda
 	if(htim==&htim11){
+		time++;
 		//uint8_t data[]="Hello World\r\n";
 		//uint32_t sizeData=sizeof(data);
 		//wiFiClass->sendData(wiFiClass,&data[0],sizeData);

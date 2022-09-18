@@ -17,7 +17,6 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <NewMain.h>
 #include "main.h"
 #include "adc.h"
 #include "tim.h"
