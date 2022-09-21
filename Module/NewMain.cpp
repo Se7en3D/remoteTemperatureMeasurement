@@ -50,7 +50,8 @@ void newMain(){
 			  time=0;
 			  ds18b20->StartOfMeasurment();
 		  }
-		  ds18b20->GetTempValue();
+		  int value[50];
+		  ds18b20->GetTempValue(&value[50],50);
 	  }
 }
 

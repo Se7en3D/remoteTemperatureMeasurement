@@ -25,6 +25,8 @@
 #define DS18B20_SCRATCHPAD_SIZE 9
 #define DS18B20_ROM_SIZE 8
 
+	//Error value
+#define DS18B20_OUT_OF_MEMORY -20
 class DS18B20: public virtual TempSensor {
 private:
 
@@ -56,7 +58,7 @@ public:
 	uint32_t Initialize() override;
 	void StartOfMeasurment() override;
 	void TimeHandler() override;
-	int *GetTempValue() override;
+	int GetTempValue(int* data,uint32_t size) override;
 	void SetCommunication(TempSensComms *tempSensComms) override;
 	void SetResolution(uint8_t resolution) override;
 };

@@ -214,7 +214,8 @@ void DS18B20::StartOfMeasurment(){
 }
 void DS18B20::TimeHandler(){
 }
-int *DS18B20::GetTempValue(){
+int DS18B20::GetTempValue(int* data,uint32_t size){
+	int readValue=0;
 	for(ds18b20Config &config:this->configs){
 		uint8_t dataToSend=0;
 		if(config.conversion==false){
@@ -235,10 +236,14 @@ int *DS18B20::GetTempValue(){
 			config.temperature=(config.scratchpad[1]<<8)+config.scratchpad[0];
 			this->decodeTemp(&config);
 			config.conversion=false;
-			return &config.decodedTemp;
+			if(((unsigned int )readValue)>=size){
+				return DS18B20_OUT_OF_MEMORY;
+			}
+			data[readValue]=config.decodedTemp;
+			readValue++;
 		}
 	}
-	return nullptr;
+	return readValue;
 }
 void DS18B20::SetCommunication(TempSensComms *tempSensComms){
 	this->tempSensComms=tempSensComms;

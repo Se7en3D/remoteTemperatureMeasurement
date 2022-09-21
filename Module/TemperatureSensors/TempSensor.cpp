@@ -19,6 +19,6 @@ TempSensor::~TempSensor() {
 uint32_t TempSensor::Initialize(){return false;}
 void TempSensor::StartOfMeasurment(){};
 void TempSensor::TimeHandler(){};
-int *TempSensor::GetTempValue(){ return nullptr;}
+int TempSensor::GetTempValue(int* data,uint32_t size){data=nullptr; return 0;}
 void TempSensor::SetCommunication(TempSensComms *tempSensComms){}
 void TempSensor::SetResolution(uint8_t resolution){};

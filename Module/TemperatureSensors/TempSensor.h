@@ -17,7 +17,7 @@ public:
 	virtual uint32_t Initialize();
 	virtual void StartOfMeasurment();
 	virtual void TimeHandler();
-	virtual int *GetTempValue();
+	virtual int GetTempValue(int* data,uint32_t size);
 	virtual void SetCommunication(TempSensComms *tempSensComms);
 	virtual void SetResolution(uint8_t resolution);
 };
