@@ -4,7 +4,7 @@
  *  Created on: 27 wrz 2022
  *      Author: Daniel
  */
-
+#pragma once
 #ifndef COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266STATE_H_
 #define COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266STATE_H_
 #include "CommunicationWithPC/ComWithPC.h"
@@ -25,11 +25,13 @@ volatile static const uint8_t stringWifiCheckConnection[]="AT\r\n";
 
 
 class ESP8266State {
+protected:
+	ComWithPC *parent;
 private:
 public:
 	ESP8266State();
 	virtual ~ESP8266State();
-	virtual void setParent(ComWithPC *parent);
+	void setParent(ComWithPC *parent);
 	virtual int addData(uint8_t *data,uint32_t size);
 	virtual int initial();
 	virtual void main();
@@ -38,108 +40,4 @@ public:
 
 
 
-class ESP8266CommunicationTest: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266CommunicationTest();
-	virtual ~ESP8266CommunicationTest();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
-
-class ESP8266CheckCIPSTATUS: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266CheckCIPSTATUS();
-	virtual ~ESP8266CheckCIPSTATUS();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
-
-class ESP8266SetMode: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266SetMode();
-	virtual ~ESP8266SetMode();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
-
-class ESP8266ConnectToRouter: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266ConnectToRouter();
-	virtual ~ESP8266ConnectToRouter();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
-
-class ESP8266ConnectToTCPServer: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266ConnectToTCPServer();
-	virtual ~ESP8266ConnectToTCPServer();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
-
-class ESP8266SetPassthroughMode: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266SetPassthroughMode();
-	virtual ~ESP8266SetPassthroughMode();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
-
-class ESP8266Initialized: public virtual ESP8266State{
-public:
-	ComWithPC *parent;
-	ESP8266Initialized();
-	virtual ~ESP8266Initialized();
-	void setParent(ComWithPC *parent) override;
-	int addData(uint8_t *data,uint32_t size) override;
-	int initial() override;
-	void main() override;
-	void timerInterrupt() override;
-private:
-	uint32_t time;
-	std::vector<char> data;
-};
 #endif /* COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266STATE_H_ */

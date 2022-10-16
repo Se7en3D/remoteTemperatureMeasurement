@@ -38,6 +38,7 @@ private:
 	GPIO_TypeDef * resetGpio;
 	uint16_t resetPin;
 	ESP8266State *state;
+	ESP8266State *nextState;
 	uint32_t time;
 };
 

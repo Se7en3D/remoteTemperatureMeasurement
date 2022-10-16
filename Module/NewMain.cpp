@@ -40,10 +40,10 @@ void newMain(){
 		//Setup
 	  OneWire *oneWire=new OneWire();
 	  oneWire->InterfaceSet(&huart5);
-	  ds18b20=new DS18B20();
-	  ds18b20->SetCommunication(oneWire);
-	  ds18b20->Initialize();
-	  ds18b20->StartOfMeasurment();
+	  //ds18b20=new DS18B20();
+	 //ds18b20->SetCommunication(oneWire);
+	  //ds18b20->Initialize();
+	  //ds18b20->StartOfMeasurment();
 	  HAL_TIM_Base_Start_IT(&htim10);
 	  HAL_TIM_Base_Start_IT(&htim11);
 	  com=new WifiESP8266ATCom(&huart4,WIFIESP8266RESET_GPIO_Port,WIFIESP8266RESET_Pin);
@@ -53,10 +53,10 @@ void newMain(){
 	  while(true){
 		  if(time>=10){
 			  time=0;
-			  ds18b20->StartOfMeasurment();
+			  //ds18b20->StartOfMeasurment();
 		  }
 		  int value[50];
-		  ds18b20->GetTempValue(&value[50],50);
+		 // ds18b20->GetTempValue(&value[50],50);
 		  com->Main();
 		  if(huart4.RxState==HAL_UART_STATE_READY){
 			  HAL_UART_Receive_IT(&huart4,(uint8_t*) &huart4RxData, sizeof(huart4RxData));
@@ -76,9 +76,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		//1 ms
 	if(htim==&htim10){
-		if(ds18b20!=nullptr){
-			ds18b20->TimeHandler();
-		}
+		//if(ds18b20!=nullptr){
+		//	ds18b20->TimeHandler();
+		//}
 		if(com!=nullptr){
 			com->TimeInterrupt();
 		}
