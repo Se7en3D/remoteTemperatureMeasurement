@@ -67,7 +67,7 @@ void newMain(){
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	if(huart==&huart4){
 		if(com!=nullptr){
-			com->addData((uint8_t*)&huart4RxData,1);
+			com->addUartData((uint8_t*)&huart4RxData,1);
 		}
 		//WiFiAddDataFromUART(wiFiClass,&huart4RxData);
 		HAL_UART_Receive_IT(&huart4,(uint8_t*) &huart4RxData, sizeof(huart4RxData));

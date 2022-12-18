@@ -13,24 +13,18 @@
 #include <vector>
 #include <iterator>
 #include <cstring>
-
-ESP8266State::ESP8266State() {
-
+ESP8266State::ESP8266State(WifiESP8266ATCom *parent) {
+	ESP8266State::parent=parent;
 }
 
 ESP8266State::~ESP8266State() {
 	// TODO Auto-generated destructor stub
 }
 
-int ESP8266State::addData(uint8_t *data,uint32_t size){
-	return -1;
-}
 int ESP8266State::initial(){
 	return -1;
 }
-void ESP8266State::setParent(ComWithPC *parent){
-	this->parent=parent;
-}
+
 void ESP8266State::main(){
 
 }
