@@ -29,7 +29,12 @@
 #define DS18B20_OUT_OF_MEMORY -20
 class DS18B20: public virtual TempSensor {
 private:
-
+	static constexpr int maxConversionTime[4]={
+			94, //ds18b20_9bitResolution
+			188, //ds18b20_10bitResolution
+			375, //ds18b20_11bitResolution
+			750, //ds18b20_12bitResolution
+	}; /*Maksymalny czas konwersji wyrażony w milisekundach*/
 	enum ds18b20resolution{
 		ds18b20_9bitResolution,
 		ds18b20_10bitResolution,

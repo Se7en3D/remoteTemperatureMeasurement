@@ -21,25 +21,19 @@ ESP8266SetPassthroughMode::ESP8266SetPassthroughMode(WifiESP8266ATCom *parent):E
 ESP8266SetPassthroughMode::~ESP8266SetPassthroughMode(){
 }
 int ESP8266SetPassthroughMode::initial(){
-	if(ESP8266State::parent==nullptr){
-		return PARENT_NO_SET_ERROR;
-	}
-	this->parent->clearUartData();
-	this->time=0;
-	ESP8266State::parent->SendData((uint8_t*)stringWifiModePassthrough, sizeof(stringWifiModePassthrough)-1);
-	return  1;
-	return 1;
+	return this->sendUartData((uint8_t*)stringWifiModePassthrough, sizeof(stringWifiModePassthrough)-1);
+
 }
 void ESP8266SetPassthroughMode::main(){
 	if(this->parent==nullptr){
 		return;
 	}
-	if(time>COMMUNICATION_TEST_TIME_TO_REINIT){
+	if(this->getTime()>COMMUNICATION_TEST_TIME_TO_REINIT){
 		this->initial();
 	}
 
 	char dataToFind[]="OK";
-	uint8_t *dataFromBuffer=nullptr;
+	const char *dataFromBuffer=nullptr;
 	int bufferSize=0;
 	dataFromBuffer=this->parent->getUartData(&bufferSize);
 
@@ -54,6 +48,4 @@ void ESP8266SetPassthroughMode::main(){
 	ESP8266Initialized *nextState=new ESP8266Initialized(ESP8266State::parent);
 	this->parent->ChangeState(nextState);
 }
-void ESP8266SetPassthroughMode::timerInterrupt(){
-	this->time++;
-}
+

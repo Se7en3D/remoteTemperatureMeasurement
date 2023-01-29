@@ -13,6 +13,7 @@ extern "C"
 #endif
 
 void newMain();
+int _write(int file, char *ptr, int len);
 
 #ifdef __cplusplus
 }

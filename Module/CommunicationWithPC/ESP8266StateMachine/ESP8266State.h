@@ -16,15 +16,20 @@
 class WifiESP8266ATCom;
 
 class ESP8266State {
-protected:
-	inline static WifiESP8266ATCom *parent=nullptr;
 private:
+	 uint32_t time;
+protected:
+	 WifiESP8266ATCom *parent=nullptr;
+	 inline uint32_t getTime(){return time;}
+	 inline void resetTime(){this->time=0;}
+	 int sendUartData(uint8_t *data,uint32_t size);
 public:
 	ESP8266State(WifiESP8266ATCom *parent);
 	virtual ~ESP8266State();
-	virtual int initial();
-	virtual void main();
-	virtual void timerInterrupt();
+	virtual int initial()=0;
+	virtual void main()=0;
+	virtual bool readyToSend();
+	void timerInterrupt();
 };
 
 

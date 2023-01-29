@@ -7,6 +7,8 @@
 
 #include <CommunicationWithPC/WifiESP8266ATCom.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266CommunicationTest.h>
+#include <CommunicationWithPC/ESP8266StateMachine/ESP8266CipSend.h>
+#include <CommunicationWithPC/ESP8266StateMachine/ESP8266Definitions.h>
 WifiESP8266ATCom::WifiESP8266ATCom(UART_HandleTypeDef *uart,GPIO_TypeDef * resetGpio,uint16_t resetPin) {
 	this->uart=uart;
 	this->state=new ESP8266CommunicationTest(this);
@@ -32,30 +34,49 @@ void WifiESP8266ATCom::Main(){
 	if(this->state!=nullptr && this->nextState==nullptr){
 		this->state->main();
 	}
+	if(this->uartReceivedBuffer.size()>MAX_WIFI_RECEIVED_BUFFER){
+		this->uartReceivedBuffer.erase(MAX_WIFI_RECEIVED_BUFFER/2,0);
+	}
 
 }
 int WifiESP8266ATCom::SendData(uint8_t *data,uint32_t size){
+	if(this->state->readyToSend() && nextState==nullptr){
+		ESP8266CipSend *nextState=new ESP8266CipSend(this);
+		nextState->sendData(reinterpret_cast<const char*>(data), size);
+		this->nextState=nextState;
+		return 0;
+	}
+	//HAL_UART_Transmit_IT(this->uart, data, size);
+	return 1;
+}
+int WifiESP8266ATCom::SendCommand(uint8_t *data,uint32_t size){
 	HAL_UART_Transmit_IT(this->uart, data, size);
 	return 0;
 }
 int WifiESP8266ATCom::addUartData(uint8_t *data,uint32_t size){
 	for(uint32_t i=0;i<size;i++){
-		this->uartData.push_back(*data);
+		//this->uartData.push_back(*data);
+		this->uartReceivedBuffer.append(reinterpret_cast<char*>(data));
 	}
 	return 0;
 }
-uint8_t*  WifiESP8266ATCom::getUartData(int *size){
-	*size=this->uartData.size();
-	if(*size>0)
-		return this->uartData.data();
-	else{
+const char *  WifiESP8266ATCom::getUartData(int *size){
+	*size=this->uartReceivedBuffer.size();
+	if(*size>0){
+		//uint8_t* data=this->uartData.data();
+		//return data;
+		return this->uartReceivedBuffer.c_str();
+	}else{
 		return nullptr;
 	}
 
 
 }
 void WifiESP8266ATCom::clearUartData(){
-	this->uartData.clear();
+	//for(unsigned char &data:this->uartData ){
+	//	data=0;
+	//}
+	this->uartReceivedBuffer.clear();
 }
 int WifiESP8266ATCom::GetFrameFromBuffer(uint8_t *data){
 	return 0;

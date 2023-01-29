@@ -26,12 +26,6 @@ static constexpr uint8_t CRCTable[256] = {
 	  233,183, 85, 11,136,214, 52,106, 43,117,151,201, 74, 20,246,168,
 	  116, 42,200,150, 21, 75,169,247,182,232, 10, 84,215,137,107, 53
 	};
-static constexpr uint32_t ds18b20ConversionTime[4]={
-		94,
-		188,
-		375,
-		750
-};
 DS18B20::DS18B20() {
 	// TODO Auto-generated constructor stub
 	this->tempSensComms=nullptr;
@@ -69,33 +63,23 @@ void DS18B20::readScratchpad(ds18b20Config *config){
 			printf("Scratchpad crc is incorrect\n");
 		}
 		//Skonfigurowanie rozdzielczości przetwornika
-		config->resolution=static_cast<ds18b20resolution>((config->scratchpad[5]>>5)&0x03);
+		config->resolution=static_cast<ds18b20resolution>((config->scratchpad[4]>>5)&0x03);
 }
 void DS18B20::decodeTemp(ds18b20Config *config){
-	uint32_t sign=0;
 	uint32_t exponent=0;
 	uint32_t fraction=0;
-	uint32_t bits[11];
-	uint32_t bitsSize=sizeof(bits)/sizeof(uint32_t);
-	for(uint32_t i=0;i<bitsSize;i++){
-		bits[i]=config->temperature&(1<<i);
+	uint32_t tempRaw=config->temperature;
+	uint32_t sign=tempRaw&(1<<31);
+	if(sign>0){
+	    tempRaw^=0b1111111111110000;
 	}
-
-	for(uint32_t i=0;i<bitsSize;i++){
-		if(i<4){
-			if(bits[i]){
+	for(uint32_t i=0;i<11;i++){
+		if((tempRaw&(1<<i))>0){
+			if(i<4){
 				fraction+=(10000/(pow(2,4-i)));
+			}else{
+				exponent+=(10000*pow(2,i-4));
 			}
-			continue;
-		}
-		if(i==(bitsSize-1)){
-			if(bits[i]){
-				sign=1;
-			}
-			continue;
-		}
-		if(bits[i]){
-			exponent+=(10000*pow(2,i-4));
 		}
 	}
 	config->decodedTemp=0;
@@ -103,7 +87,6 @@ void DS18B20::decodeTemp(ds18b20Config *config){
 	if(sign){
 		config->decodedTemp*=(-1);
 	}
-
 }
 
 uint32_t DS18B20::Initialize(){
@@ -200,38 +183,53 @@ void DS18B20::StartOfMeasurment(){
 			this->tempSensComms->Write(&dataToSend, 8);
 			this->tempSensComms->Write(config.romNO, DS18B20_ROM_SIZE*8);
 				//Check conversion status
-			dataToSend=DS18B20_RECALL_E2;
-			this->tempSensComms->Write(&dataToSend, 8);
-			if(this->tempSensComms->Read()==0){
-				continue;
-			}
+//			dataToSend=DS18B20_RECALL_E2;
+//			this->tempSensComms->Write(&dataToSend, 8);
+//			while(this->tempSensComms->Read()==0){
+//
+//			}
+			//if(this->tempSensComms->Read()==0){
+			//	continue;
+			//}
 				//Start conversion
 			dataToSend=DS18B20_CONVERT_T;
 			this->tempSensComms->Write(&dataToSend, 8);
 			this->tempSensComms->Read();
+			config.timer=this->maxConversionTime[static_cast<int>(config.resolution)];
 			config.conversion=true;
 	}
 }
 void DS18B20::TimeHandler(){
+	for(ds18b20Config &config:this->configs){
+		if(config.timer>0){
+			config.timer--;
+		}
+	}
 }
 int DS18B20::GetTempValue(int* data,uint32_t size){
 	int readValue=0;
+	for(ds18b20Config &config:this->configs){
+		if(config.timer>0){
+			return 0;
+		}
+	}
 	for(ds18b20Config &config:this->configs){
 		uint8_t dataToSend=0;
 		if(config.conversion==false){
 			continue;
 		}
-			//Reset
-		this->tempSensComms->Reset();
-			//Match ROM
-		dataToSend=DS18B20_MATCH_ROM;
-		this->tempSensComms->Write(&dataToSend, 8);
-		this->tempSensComms->Write(config.romNO, DS18B20_ROM_SIZE*8);
-			//Check converting
-		dataToSend=DS18B20_RECALL_E2;
-		this->tempSensComms->Write(&dataToSend, 8);
 
-		if(this->tempSensComms->Read()){
+			//Reset
+		//this->tempSensComms->Reset();
+			//Match ROM
+		//dataToSend=DS18B20_MATCH_ROM;
+		//this->tempSensComms->Write(&dataToSend, 8);
+		//this->tempSensComms->Write(config.romNO, DS18B20_ROM_SIZE*8);
+			//Check converting
+		//dataToSend=DS18B20_RECALL_E2;
+		//this->tempSensComms->Write(&dataToSend, 8);
+
+		//if(this->tempSensComms->Read()){
 			this->readScratchpad(&config);
 			config.temperature=(config.scratchpad[1]<<8)+config.scratchpad[0];
 			this->decodeTemp(&config);
@@ -241,7 +239,9 @@ int DS18B20::GetTempValue(int* data,uint32_t size){
 			}
 			data[readValue]=config.decodedTemp;
 			readValue++;
-		}
+		//}else{
+		//	printf("Nie udało się\r\n");
+		//}
 	}
 	return readValue;
 }

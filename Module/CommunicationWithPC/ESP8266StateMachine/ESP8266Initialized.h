@@ -4,7 +4,7 @@
  *  Created on: 15 paź 2022
  *      Author: Daniel
  */
-
+#pragma once
 #ifndef COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266INITIALIZED_H_
 #define COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266INITIALIZED_H_
 #include "CommunicationWithPC/ESP8266StateMachine/ESP8266State.h"
@@ -15,9 +15,8 @@ public:
 	virtual ~ESP8266Initialized();
 	int initial() override;
 	void main() override;
-	void timerInterrupt() override;
+	bool readyToSend() override;
 private:
-	uint32_t time;
 };
 
 #endif /* COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266INITIALIZED_H_ */

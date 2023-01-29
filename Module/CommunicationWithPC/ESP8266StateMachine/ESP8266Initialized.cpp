@@ -8,6 +8,7 @@
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266Initialized.h>
 #include <CommunicationWithPC/WifiESP8266ATCom.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266Definitions.h>
+#include <CommunicationWithPC/ESP8266StateMachine/ESP8266CheckCIPSTATUS.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -25,9 +26,21 @@ int ESP8266Initialized::initial(){
 }
 
 void ESP8266Initialized::main(){
-
+	if(this->parent==nullptr){
+		return;
+	}
+	const char *dataFromBuffer=nullptr;
+	int bufferSize=0;
+	dataFromBuffer=this->parent->getUartData(&bufferSize);
+	if(bufferSize>0){
+		if(strstr(dataFromBuffer,"CLOSED")>0 || strstr(dataFromBuffer,"WIFI DISCONNECT")>0){
+			ESP8266CheckCIPSTATUS *nextState=new ESP8266CheckCIPSTATUS(ESP8266State::parent);
+			this->parent->ChangeState(nextState);
+			this->parent->clearUartData();
+		}
+	}
 }
-void ESP8266Initialized::timerInterrupt(){
 
+inline bool ESP8266Initialized::readyToSend(){
+	return true;
 }
-

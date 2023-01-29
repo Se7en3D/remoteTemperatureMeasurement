@@ -24,25 +24,20 @@ ESP8266ConnectToTCPServer::ESP8266ConnectToTCPServer(WifiESP8266ATCom *parent):E
 ESP8266ConnectToTCPServer::~ESP8266ConnectToTCPServer(){
 }
 int ESP8266ConnectToTCPServer::initial(){
-	if(ESP8266State::parent==nullptr){
-		return PARENT_NO_SET_ERROR;
-	}
-	this->parent->clearUartData();
-	this->time=0;
-	ESP8266State::parent->SendData((uint8_t*)stringWifiConntectToServer, sizeof(stringWifiConntectToServer)-1);
-	return  1;
+	return this->sendUartData((uint8_t*)stringWifiConntectToServer, sizeof(stringWifiConntectToServer)-1);
+
 }
 
 void ESP8266ConnectToTCPServer::main(){
 	if(this->parent==nullptr){
 		return;
 	}
-	if(time>COMMUNICATION_TEST_TIME_TO_REINIT){
+	if(this->getTime()>COMMUNICATION_TEST_TIME_TO_REINIT*4){ //Odczekaj 2 sek
 		this->initial();
 	}
 
 	char dataToFind[]="OK";
-	uint8_t *dataFromBuffer=nullptr;
+	const char *dataFromBuffer=nullptr;
 	int bufferSize=0;
 	dataFromBuffer=this->parent->getUartData(&bufferSize);
 
@@ -58,7 +53,5 @@ void ESP8266ConnectToTCPServer::main(){
 	this->parent->ChangeState(nextState);
 
 }
-void ESP8266ConnectToTCPServer::timerInterrupt(){
-	this->time++;
-}
+
 

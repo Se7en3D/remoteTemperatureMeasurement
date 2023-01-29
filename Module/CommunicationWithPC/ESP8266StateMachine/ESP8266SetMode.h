@@ -4,7 +4,7 @@
  *  Created on: 15 paź 2022
  *      Author: Daniel
  */
-
+#pragma once
 #ifndef COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266SETMODE_H_
 #define COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266SETMODE_H_
 
@@ -16,9 +16,7 @@ public:
 	virtual ~ESP8266SetMode();
 	int initial() override;
 	void main() override;
-	void timerInterrupt() override;
 private:
-	uint32_t time;
 };
 
 #endif /* COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266SETMODE_H_ */

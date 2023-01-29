@@ -14,22 +14,29 @@
 #include <iterator>
 #include <cstring>
 ESP8266State::ESP8266State(WifiESP8266ATCom *parent) {
-	ESP8266State::parent=parent;
+	//ESP8266State::parent=parent;
+	this->parent=parent;
+	this->time=COMMUNICATION_TEST_TIME_TO_REINIT*10;
+
 }
 
 ESP8266State::~ESP8266State() {
 	// TODO Auto-generated destructor stub
 }
 
-int ESP8266State::initial(){
-	return -1;
-}
-
-void ESP8266State::main(){
-
-}
 void ESP8266State::timerInterrupt(){
-
+	this->time++;
 }
 
-
+int ESP8266State::sendUartData(uint8_t *data,uint32_t size){
+	if(ESP8266State::parent==nullptr){
+		return PARENT_NO_SET_ERROR;
+	}
+	this->parent->clearUartData();
+	this->time=0;
+	this->parent->SendCommand(data, size);
+	return  1;
+}
+inline bool ESP8266State::readyToSend(){
+	return false;
+}
