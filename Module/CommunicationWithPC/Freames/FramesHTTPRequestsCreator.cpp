@@ -6,7 +6,8 @@
  */
 
 #include <CommunicationWithPC/Freames/FramesHTTPRequestsCreator.h>
-
+#include "GlobalData.h"
+#include <string.h>
 FramesHTTPRequestsCreator::FramesHTTPRequestsCreator() {
 	// TODO Auto-generated constructor stub
 
@@ -22,7 +23,15 @@ std::string FramesHTTPRequestsCreator::creatingTemperaturesTransmissionFrame(int
 	}
 	std::string request="";
 	std::string content="";
+		//Dodanie numerID w formacie HEX
+	content.append("uniqueDeviceID=");
+	char UDIDChar[4*2*3]={0};
+	sprintf(&UDIDChar[0],"%4X%4X%4X",stm32UniqueDeviceID.id[2],stm32UniqueDeviceID.id[1],stm32UniqueDeviceID.id[0]);
+	//sprintf(&UDIDChar[0],"%4X",stm32UniqueDeviceID.id[2]);
+	content.append(UDIDChar);
+	content.append("&");
 		//Przygotowanie zawartości protokołu POST
+
 	content.append("tempCount=");
 	content.append(std::to_string(tempCount));
 	content.append("&");

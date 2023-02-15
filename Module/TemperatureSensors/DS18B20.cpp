@@ -171,6 +171,7 @@ uint32_t DS18B20::Initialize(){
 	for(ds18b20Config &config:this->configs){
 		this->readScratchpad(&config);
 	}
+	this->printfConnectedDS18B20();
 	return true;
 }
 void DS18B20::StartOfMeasurment(){
@@ -259,4 +260,24 @@ uint8_t DS18B20::CalcCRC(uint8_t *data,uint8_t size){
 	    }
 
 	    return result;
+}
+void DS18B20::printfConnectedDS18B20(){
+	int romNo=0;
+	printf("After initialization DS18B20\r\n");
+	if(this->configs.size()==0){
+		printf("No found DS18B20");
+	}
+	for(ds18b20Config &ds18b20Config:this->configs){
+		printf("ROM[%d]: ",romNo);
+		for(int i=0;i<DS18B20_ROM_SIZE;i++){
+			printf("%02X ",ds18b20Config.romNO[i]);
+		}
+		printf("\r\n");
+		printf("Scratchpad[%d]: ",romNo);
+		for(int i=0;i<DS18B20_SCRATCHPAD_SIZE;i++){
+			printf("%02X ",ds18b20Config.scratchpad[i]);
+		}
+		printf("\r\n");
+		romNo++;
+	}
 }

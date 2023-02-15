@@ -45,10 +45,10 @@ int ESP8266CipSend::initial(){
 		break;
 	case sendDataStatus::SendingData:
 		if(this->getTime()>10*COMMUNICATION_TEST_TIME_TO_REINIT){
+			this->parent->clearUartData();
 			this->sendUartData(reinterpret_cast<uint8_t*>(bufferSender),dataSizeinBufferSender);
 			this->resetTime();
 			this->setStatusToInicialized();
-			this->parent->clearUartData();
 		}
 		break;
 	}
@@ -94,7 +94,6 @@ void ESP8266CipSend::main(){
 		if(bufferSize>0 && dataFromBuffer!=nullptr){
 			if(strstr(dataFromBuffer,"SEND OK")>0){
 				this->setStatusToInicialized();
-				this->parent->clearUartData();
 			}
 		}
 	break;

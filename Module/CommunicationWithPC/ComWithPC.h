@@ -8,6 +8,7 @@
 #ifndef COMMUNICATIONWITHPC_COMWITHPC_H_
 #define COMMUNICATIONWITHPC_COMWITHPC_H_
 #include <stdint.h>
+#include <string>
 class ComWithPC {
 public:
 	ComWithPC();
@@ -15,7 +16,7 @@ public:
 	virtual int Initialized();
 	virtual void Main();
 	virtual int SendData(uint8_t *data,uint32_t size);
-	virtual int GetFrameFromBuffer(uint8_t *data);
+	virtual int GetResponse(std::string *data);
 	virtual void Reset();
 	virtual void TimeInterrupt();
 	virtual int addUartData(uint8_t *data,uint32_t size);

@@ -57,6 +57,7 @@ private:
 	uint8_t CalcCRC(uint8_t *data,uint8_t size);
 	void readScratchpad(ds18b20Config *config);
 	void decodeTemp(ds18b20Config *config);
+	void printfConnectedDS18B20();
 public:
 	DS18B20();
 	virtual ~DS18B20();

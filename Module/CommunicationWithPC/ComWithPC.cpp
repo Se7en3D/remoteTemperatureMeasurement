@@ -19,7 +19,7 @@ ComWithPC::~ComWithPC() {
 int ComWithPC::Initialized(){return -1;}
 void ComWithPC::Main(){}
 int ComWithPC::SendData(uint8_t *data,uint32_t size){return 0;}
-int ComWithPC::GetFrameFromBuffer(uint8_t *data){return 0;}
+int ComWithPC::GetResponse(std::string *data){return 0;}
 void ComWithPC::Reset(){};
 void ComWithPC::TimeInterrupt(){};
 int ComWithPC::addUartData(uint8_t *data,uint32_t size){return 0;}

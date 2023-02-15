@@ -25,7 +25,7 @@ public:
 	void Main() override;
 	int SendData(uint8_t *data,uint32_t size) override;
 	int SendCommand(uint8_t *data,uint32_t size);
-	int GetFrameFromBuffer(uint8_t *data) override;
+	int GetResponse(std::string *data) override;
 	int addUartData(uint8_t *data,uint32_t size) override;
 	const char * getUartData(int *size);
 	void clearUartData();
@@ -33,7 +33,6 @@ public:
 	void TimeInterrupt() override;
 	void ChangeState(ESP8266State *state);
 private:
-	void wait(uint32_t ms);
 	UART_HandleTypeDef *uart;
 	GPIO_TypeDef * resetGpio;
 	uint16_t resetPin;
@@ -42,6 +41,10 @@ private:
 	uint32_t time;
 	std::string uartReceivedBuffer;
 	std::string uartTransmitterBuffer;
+	int ipdSize=0;
+	std::string ipdMessage="";
+	void wait(uint32_t ms);
+	void findIPDMessage();
 };
 
 #endif /* COMMUNICATIONWITHPC_WIFIESP8266ATCOM_H_ */
