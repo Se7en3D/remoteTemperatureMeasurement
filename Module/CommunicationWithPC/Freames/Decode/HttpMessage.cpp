@@ -67,6 +67,7 @@ void HttpMessage::clearData()
     this->type=httpMessageType::NONE;
     this->stateOfCompleteData=WaitingForStartLine;
     this->answerCode=-1;
+    this->bodyLength=0;
 }
 
 std::vector<std::string> HttpMessage::stringSplit(const std::string &data,const std::string &del,bool includeEmptyLine){
@@ -164,9 +165,11 @@ int HttpMessage::findEmptyLine(){
 	if(tempString.size()==2){
 		this->findContentLength();
 		if(this->bodyLength>0){
+			printf("BSize=%d\r\n",this->bodyLength);
 			this->stateOfCompleteData=WaitingForLastBodyByte;
 		}else{
 			this->stateOfCompleteData=FrameComplete;
+			return 0;
 		}
 
 	}else{
@@ -209,10 +212,15 @@ void HttpMessage::findContentLength(){
 					i--;
 				}
 			}
-			this->bodyLength=stoi(number);
-			break;
+			if(number.size()>0){
+				this->bodyLength=stoi(number);
+			}else{
+				break;
+			}
+			return;
 		}
 	}
+	this->bodyLength=0;
 }
 int  HttpMessage::findAnswerCode(){
 	const char spaceChar[]=" ";

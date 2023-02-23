@@ -32,8 +32,9 @@ void WifiESP8266ATCom::Main(){
 	if(this->state!=nullptr && this->nextState==nullptr){
 		this->state->main();
 	}
-	//this->findIPDMessage();
+	this->findIPDMessage();
 	if(this->uartReceivedBuffer.size()>MAX_WIFI_RECEIVED_BUFFER){
+		printf("Usówanie bufora\r\n");
 		this->uartReceivedBuffer.erase(0,MAX_WIFI_RECEIVED_BUFFER/2);
 	}
 
@@ -119,7 +120,7 @@ void WifiESP8266ATCom::findIPDMessage(){
 		}
 		this->ipdMessage.append(this->uartReceivedBuffer.substr(0,sizeToCopy));
 		this->ipdSize-=sizeToCopy;
-		printf("STC=%d IZ=%d\r\n",sizeToCopy,this->ipdSize);
+		//printf("STC=%d IZ=%d\r\n",sizeToCopy,this->ipdSize);
 		if(this->ipdSize<0){
 			printf("ipdSize=%d",this->ipdSize);
 			//printf("%s\r\n",this->ipdMessage.c_str());
@@ -133,6 +134,7 @@ void WifiESP8266ATCom::findIPDMessage(){
 		if(ipdStartPosition==std::string::npos){
 			return;
 		}
+		//this->uartReceivedBuffer.erase(0,ipdStartPosition);
 		ipdEndPosition=this->uartReceivedBuffer.find(ipdEnd);
 		if(ipdEndPosition==std::string::npos){
 			return;
@@ -155,7 +157,7 @@ void WifiESP8266ATCom::findIPDMessage(){
 		}
 		if(this->ipdSize>0){
 			printf("ipdSize=%d\r\n",this->ipdSize);
-		//	this->findIPDMessage();
+			this->findIPDMessage();
 		}
 
 	}

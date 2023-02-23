@@ -49,7 +49,7 @@ private:
     httpMessageMethod method;
     httpMessageType type;
     int answerCode;
-    size_t bodyLength;
+    size_t bodyLength=0;
     std::string tempBuffer;
     std::vector<std::string> header;
     std::string body;

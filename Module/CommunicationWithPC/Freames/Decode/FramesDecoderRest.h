@@ -9,12 +9,20 @@
 #define COMMUNICATIONWITHPC_FREAMES_FRAMESDECODERREST_H_
 
 #include <CommunicationWithPC/Freames/Decode/FramesDecoder.h>
-
+#include "HttpMessage.h"
+#include "../ContentType/ContentTypeGetter.h"
 class FramesDecoderRest: public FramesDecoder {
 public:
 	FramesDecoderRest();
 	virtual ~FramesDecoderRest();
-	DecodedFrame decodeFrame(std::string &frame) override;
+	int decodeFrame(std::string &inputFrame,DecodedFrame* decodedFrame) override;
+private:
+	ContentTypeGetter *contentTypeDecoder=nullptr;
+	HttpMessage httpMessage;
+	decodedFrameType getMessageType(HttpFrame *httpFrame);
+	int checkContentType(HttpFrame *httpFrame);
+	int decodeSetTime(HttpFrame *httpFrame);
+
 };
 
 #endif /* COMMUNICATIONWITHPC_FREAMES_FRAMESDECODERREST_H_ */

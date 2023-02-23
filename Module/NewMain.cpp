@@ -24,6 +24,8 @@
 #include "CommunicationWithPC/WifiESP8266ATCom.h"
 #include "CommunicationWithPC/Freames/FramesCreator.h"
 #include "CommunicationWithPC/Freames/FramesHTTPRequestsCreator.h"
+#include "CommunicationWithPC/Freames/Decode/FramesDecoder.h"
+#include "CommunicationWithPC/Freames/Decode/FramesDecoderRest.h"
 #include "GlobalData.h"
 #include <stdio.h>
 #include <string>
@@ -35,6 +37,8 @@ volatile uint32_t time=0;
 volatile uint8_t huart4RxData;
 
 void newMain(){
+		//
+	FramesDecoder *framesDecoder=new FramesDecoderRest();
 		//Read Unique device ID
 	stm32UniqueDeviceID.id[0]=*(STM32F4_SYSCFG::UID31_0);
 	stm32UniqueDeviceID.id[1]=*(STM32F4_SYSCFG::UID63_32);
@@ -55,7 +59,14 @@ void newMain(){
 	while(true){
 		std::string readFrame;
 		if(com->GetResponse(&readFrame)==0){
-			printf("%s\r\n",readFrame.c_str());
+			DecodedFrame decodedFrame;
+			if(framesDecoder->decodeFrame(readFrame, &decodedFrame)==0){
+				printf("Kod statusu=%d\r\n",decodedFrame.StatusCode);
+			}else{
+				printf("Nie odkodowano dane:\r\n");
+				printf("%s\r\n",readFrame.c_str());
+			}
+			//printf("%s\r\n",readFrame.c_str());
 		}
 		if(time>=10){
 			time=0;
