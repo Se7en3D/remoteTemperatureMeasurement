@@ -29,6 +29,7 @@
 #include "GlobalData.h"
 #include <stdio.h>
 #include <string>
+
 FramesCreator *framesCreator=new FramesHTTPRequestsCreator();
 DS18B20 *ds18b20=nullptr;
 ComWithPC *com=nullptr;

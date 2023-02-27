@@ -15,36 +15,30 @@
 #include <cstring>
 
 				/*ESP8266CommunicationTest*/
-ESP8266CommunicationTest::ESP8266CommunicationTest(WifiESP8266ATCom *parent): ESP8266State(parent){
+ESP8266CommunicationTest::ESP8266CommunicationTest(){
 }
 ESP8266CommunicationTest::~ESP8266CommunicationTest(){
 }
-int ESP8266CommunicationTest::initial(){
-	return this->sendUartData((uint8_t*)stringWifiCheckConnection, sizeof(stringWifiCheckConnection)-1);
 
+ESP8266State* ESP8266CommunicationTest::getNextState(std::string &buffer){
+	int bufferSize=buffer.size();
+	if(bufferSize<=0){
+		return nullptr;
+	}
+	if(buffer.find(dataToFind)==std::string::npos){
+		return nullptr;
+	}
+	return new ESP8266CheckCIPSTATUS();
 }
-void ESP8266CommunicationTest::main(){
-	if(this->parent==nullptr){
-		return;
-	}
-	if(this->getTime()>COMMUNICATION_TEST_TIME_TO_REINIT){
-		this->initial();
-	}
-
-	char dataToFind[]="OK";
-	const char *dataFromBuffer=nullptr;
-	int bufferSize=0;
-	dataFromBuffer=this->parent->getUartData(&bufferSize);
-
-	if(bufferSize<=0 || dataFromBuffer==nullptr){
-		return;
-	}
-
-	if(strstr((char*)dataFromBuffer,&dataToFind[0])==NULL){
-		return;
-	}
-	this->parent->clearUartData();
-	ESP8266CheckCIPSTATUS *nextState=new ESP8266CheckCIPSTATUS(ESP8266State::parent);
-	this->parent->ChangeState(nextState);
+const uint8_t* ESP8266CommunicationTest::getInitialData(uint32_t *size){
+	*size=sizeof(stringWifiCheckConnection)/sizeof(stringWifiCheckConnection[0])-1;
+	return (const uint8_t*)&stringWifiCheckConnection[0];
 }
 
+bool ESP8266CommunicationTest::readyToSendInit(int time){
+	if(time>COMMUNICATION_TEST_TIME_TO_REINIT){
+		return true;
+	}else{
+		return false;
+	}
+}

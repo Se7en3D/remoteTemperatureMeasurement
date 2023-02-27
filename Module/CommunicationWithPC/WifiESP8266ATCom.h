@@ -10,13 +10,12 @@
 
 #include "CommunicationWithPC/ESP8266StateMachine/ESP8266State.h"
 #include "CommunicationWithPC/ComWithPC.h"
+#include "Models/CircularBuffer.h"
 #include "usart.h"
 #include "gpio.h"
 #include <string>
 #define MAX_WIFI_RECEIVED_BUFFER 500
 #define MAX_WIFI_TRANMITTER_BUFFER 500
-class ESP8266State;
-
 class WifiESP8266ATCom: public virtual ComWithPC {
 public:
 	WifiESP8266ATCom(UART_HandleTypeDef *uart,GPIO_TypeDef * resetGpio,uint16_t resetPin);
@@ -37,9 +36,9 @@ private:
 	GPIO_TypeDef * resetGpio;
 	uint16_t resetPin;
 	ESP8266State *state;
-	ESP8266State *nextState;
 	uint32_t time;
 	std::string uartReceivedBuffer;
+	CircularBuffer<100,uint8_t> bridgeReceivedBuffer{};
 	std::string uartTransmitterBuffer;
 	int ipdSize=0;
 	std::string ipdMessage="";

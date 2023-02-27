@@ -12,11 +12,13 @@
 class ESP8266ConnectToTCPServer: public virtual ESP8266State{
 public:
 
-	ESP8266ConnectToTCPServer(WifiESP8266ATCom *parent);
+	ESP8266ConnectToTCPServer();
 	virtual ~ESP8266ConnectToTCPServer();
-	int initial() override;
-	void main() override;
+	ESP8266State* getNextState(std::string &buffer) override;
+	const uint8_t* getInitialData(uint32_t *size) override;
+	bool readyToSendInit(int time) override;
 private:
+	static constexpr char dataToFind[]="OK";
 };
 
 

@@ -16,13 +16,25 @@
 /**
  * Stałe teksty
  */
-volatile static const uint8_t stringWifiSetMode[]="AT+CWMODE=3\r\n";
-volatile static const uint8_t stringWifiConnectToRouter[]="AT+CWJAP=\"UPC1350937\",\"DNSAZUFX\"\r\n";
-volatile static const uint8_t stringWifiConntectToServer[]="AT+CIPSTART=\"TCP\",\"192.168.0.72\",1024\r\n";
-volatile static const uint8_t stringWifiModePassthrough[]="AT+CIPMODE=0\r\n";
-volatile static const uint8_t stringWifiSendMode[]="AT+CIPSEND\r\n";
-volatile static const uint8_t stringWifiCHIPSTATUS[]="AT+CIPSTATUS\r\n";
-volatile static const uint8_t stringWifiCheckConnection[]="AT\r\n";
-
+volatile static constexpr uint8_t stringWifiSetMode[]="AT+CWMODE=3\r\n";
+volatile static constexpr uint8_t stringWifiConnectToRouter[]="AT+CWJAP=\"UPC1350937\",\"DNSAZUFX\"\r\n";
+volatile static constexpr uint8_t stringWifiConntectToServer[]="AT+CIPSTART=\"TCP\",\"192.168.0.72\",1024\r\n";
+volatile static constexpr uint8_t stringWifiModePassthrough[]="AT+CIPMODE=0\r\n";
+volatile static constexpr uint8_t stringWifiSendMode[]="AT+CIPSEND\r\n";
+volatile static constexpr uint8_t stringWifiCHIPSTATUS[]="AT+CIPSTATUS\r\n";
+volatile static constexpr uint8_t stringWifiCheckConnection[]="AT\r\n";
+namespace ESP8266{
+	enum stateName{
+		noState,
+		checkCIPSTATUS,
+		cipSend,
+		communicationTest,
+		connectToRouter,
+		connectToTCPServer,
+		initialized,
+		setMode,
+		setPasshroughMode,
+	};
+}
 
 #endif /* COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266DEFINITIONS_H_ */

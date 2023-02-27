@@ -184,6 +184,7 @@ int HttpMessage::findEmptyLine(){
 }
 int HttpMessage::waitToGetLastByteOfBody(){
 	if(this->bodyLength<=0){
+		this->stateOfCompleteData=FrameComplete;
 		return 0;
 	}
 	size_t tempBufferSize=this->tempBuffer.size();

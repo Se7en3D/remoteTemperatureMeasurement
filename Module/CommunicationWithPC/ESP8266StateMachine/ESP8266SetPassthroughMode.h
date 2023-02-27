@@ -11,11 +11,13 @@
 #include <vector>
 class ESP8266SetPassthroughMode: public virtual ESP8266State{
 public:
-	ESP8266SetPassthroughMode(WifiESP8266ATCom *parent);
+	ESP8266SetPassthroughMode();
 	virtual ~ESP8266SetPassthroughMode();
-	int initial() override;
-	void main() override;
+	ESP8266State* getNextState(std::string &buffer) override;
+	const uint8_t* getInitialData(uint32_t *size) override;
+	bool readyToSendInit(int time) override;
 private:
+	static constexpr char dataToFind[]="OK";
 };
 
 #endif /* COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266SETPASSTHROUGHMODE_H_ */

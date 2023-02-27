@@ -11,10 +11,12 @@
 #include <vector>
 class ESP8266ConnectToRouter: public virtual ESP8266State{
 public:
-	ESP8266ConnectToRouter(WifiESP8266ATCom *parent);
+	ESP8266ConnectToRouter();
 	virtual ~ESP8266ConnectToRouter();
-	int initial() override;
-	void main() override;
+	ESP8266State* getNextState(std::string &buffer) override;
+	const uint8_t* getInitialData(uint32_t *size) override;
+	bool readyToSendInit(int time) override;
 private:
+	static constexpr char dataToFind[]="OK";
 };
 #endif /* COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266CONNECTTOROUTER_H_ */

@@ -16,31 +16,43 @@
 #include <cstring>
 
 
-ESP8266Initialized::ESP8266Initialized(WifiESP8266ATCom *parent): ESP8266State(parent){
+ESP8266Initialized::ESP8266Initialized(){
 }
 ESP8266Initialized::~ESP8266Initialized(){
 }
 
-int ESP8266Initialized::initial(){
-	return -1;
-}
-
-void ESP8266Initialized::main(){
-	if(this->parent==nullptr){
-		return;
+//int ESP8266Initialized::initial(){
+//	return -1;
+//}
+//
+//void ESP8266Initialized::main(){
+//	if(this->parent==nullptr){
+//		return;
+//	}
+//	const char *dataFromBuffer=nullptr;
+//	int bufferSize=0;
+//	dataFromBuffer=this->parent->getUartData(&bufferSize);
+//	if(bufferSize>0){
+//		if(strstr(dataFromBuffer,"CLOSED")>0 || strstr(dataFromBuffer,"WIFI DISCONNECT")>0){
+//			ESP8266CheckCIPSTATUS *nextState=new ESP8266CheckCIPSTATUS(ESP8266State::parent);
+//			this->parent->ChangeState(nextState);
+//			this->parent->clearUartData();
+//		}
+//	}
+//}
+ESP8266State* ESP8266Initialized::getNextState(std::string &buffer){
+	if(buffer.find(dataClosed)!=std::string::npos || buffer.find(dataWifiDisconnect)!=std::string::npos ){
+		return new ESP8266CheckCIPSTATUS();
 	}
-	const char *dataFromBuffer=nullptr;
-	int bufferSize=0;
-	dataFromBuffer=this->parent->getUartData(&bufferSize);
-	if(bufferSize>0){
-		if(strstr(dataFromBuffer,"CLOSED")>0 || strstr(dataFromBuffer,"WIFI DISCONNECT")>0){
-			ESP8266CheckCIPSTATUS *nextState=new ESP8266CheckCIPSTATUS(ESP8266State::parent);
-			this->parent->ChangeState(nextState);
-			this->parent->clearUartData();
-		}
-	}
+	return nullptr;
 }
-
+const uint8_t* ESP8266Initialized::getInitialData(uint32_t *size){
+	*size=0;
+	return nullptr;
+}
+bool ESP8266Initialized::readyToSendInit(int time){
+	return false;
+}
 inline bool ESP8266Initialized::readyToSend(){
 	return true;
 }

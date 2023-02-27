@@ -18,75 +18,51 @@
 #include <iterator>
 #include <cstring>
 				/*ESP8266CheckCIPSTATUS*/
-ESP8266CheckCIPSTATUS::ESP8266CheckCIPSTATUS(WifiESP8266ATCom *parent): ESP8266State(parent){
+ESP8266CheckCIPSTATUS::ESP8266CheckCIPSTATUS(){
 }
 ESP8266CheckCIPSTATUS::~ESP8266CheckCIPSTATUS(){
 }
 
-
-int ESP8266CheckCIPSTATUS::initial(){
-	return this->sendUartData((uint8_t*)stringWifiCHIPSTATUS, sizeof(stringWifiCHIPSTATUS)-1);
+ESP8266State* ESP8266CheckCIPSTATUS::getNextState(std::string &buffer){
+	if(buffer.find(this->dataToFind)==std::string::npos){
+		return nullptr;
+	}
+	size_t signPosition=buffer.find(statusSigns);
+	if(signPosition==std::string::npos){
+		//Bufor wymaga wyczyszczenia
+		return new ESP8266CheckCIPSTATUS();
+	}
+	signPosition+=(sizeof(statusSigns)/sizeof(statusSigns[0])-1);
+	char tempChar=buffer.at(signPosition);
+	switch(tempChar){
+		case '1':
+			return new ESP8266ConnectToRouter();
+			break;
+		case '2':
+			return new ESP8266ConnectToTCPServer();
+			break;
+		case '3':
+			return new ESP8266Initialized();
+			break;
+		case '4':
+			return new ESP8266ConnectToTCPServer();
+			break;
+		case '5':
+			return new ESP8266SetMode();
+			break;
+		default:
+			break;
+	}
+	return new ESP8266CheckCIPSTATUS();;
 }
-void ESP8266CheckCIPSTATUS::main(){
-	if(this->parent==nullptr){
-		return;
-	}
-	if(this->getTime()>COMMUNICATION_TEST_TIME_TO_REINIT){
-		this->initial();
-	}
-	char dataToFind[]="OK";
-	char statusSigns[]="STATUS:";
-	int bufferSize=0;
-	char* dataFromBuffer=(char*)this->parent->getUartData(&bufferSize);
-
-	if(bufferSize<=0 || dataFromBuffer==nullptr){
-		return;
-	}
-
-	if(strstr(dataFromBuffer,&dataToFind[0])==NULL){
-		return;
-	}
-
-
-	char *pointerToChar=strstr(dataFromBuffer,statusSigns);
-	if(pointerToChar==NULL){
-		this->parent->clearUartData();
-		return;
-	}
-	pointerToChar+=(sizeof(statusSigns)/sizeof(char)-1);
-	char dataToSwitch=*pointerToChar;
-	this->parent->clearUartData();
-	switch(dataToSwitch){
-	case '1':{
-		ESP8266ConnectToRouter *nextState=new ESP8266ConnectToRouter(ESP8266State::parent);
-		this->parent->ChangeState(nextState);
-		break;
-	}
-	case '2':{
-		ESP8266ConnectToTCPServer *nextState=new ESP8266ConnectToTCPServer(ESP8266State::parent);
-		this->parent->ChangeState(nextState);
-		return;
-		break;
-	}
-	case '3':{
-		ESP8266Initialized *nextState=new ESP8266Initialized(ESP8266State::parent);
-		this->parent->ChangeState(nextState);
-		return;
-		break;
-	}
-	case '4':{
-		ESP8266ConnectToTCPServer *nextState=new ESP8266ConnectToTCPServer(ESP8266State::parent);
-		this->parent->ChangeState(nextState);
-		return;
-		break;
-	}
-	case '5':{
-		ESP8266SetMode *nextState=new ESP8266SetMode(ESP8266State::parent);
-		this->parent->ChangeState(nextState);
-		return;
-		break;
-	}
-	}
-
+const uint8_t* ESP8266CheckCIPSTATUS::getInitialData(uint32_t *size){
+	*size=sizeof(stringWifiCHIPSTATUS)/sizeof(stringWifiCHIPSTATUS[0])-1;
+	return (const uint8_t*)&stringWifiCHIPSTATUS[0];
 }
-
+bool ESP8266CheckCIPSTATUS::readyToSendInit(int time){
+	if(time>COMMUNICATION_TEST_TIME_TO_REINIT){
+		return true;
+	}else{
+		return false;
+	}
+}

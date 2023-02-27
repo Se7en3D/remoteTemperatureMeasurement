@@ -19,39 +19,24 @@
 
 
 
-ESP8266ConnectToTCPServer::ESP8266ConnectToTCPServer(WifiESP8266ATCom *parent):ESP8266State(parent){
+ESP8266ConnectToTCPServer::ESP8266ConnectToTCPServer(){
 }
 ESP8266ConnectToTCPServer::~ESP8266ConnectToTCPServer(){
 }
-int ESP8266ConnectToTCPServer::initial(){
-	return this->sendUartData((uint8_t*)stringWifiConntectToServer, sizeof(stringWifiConntectToServer)-1);
-
+ESP8266State* ESP8266ConnectToTCPServer::getNextState(std::string &buffer){
+	if(buffer.find(this->dataToFind)==std::string::npos){
+		return nullptr;
+	}
+	return new ESP8266SetPassthroughMode();
 }
-
-void ESP8266ConnectToTCPServer::main(){
-	if(this->parent==nullptr){
-		return;
-	}
-	if(this->getTime()>COMMUNICATION_TEST_TIME_TO_REINIT*4){ //Odczekaj 2 sek
-		this->initial();
-	}
-
-	char dataToFind[]="OK";
-	const char *dataFromBuffer=nullptr;
-	int bufferSize=0;
-	dataFromBuffer=this->parent->getUartData(&bufferSize);
-
-	if(bufferSize<=0 || dataFromBuffer==nullptr){
-		return;
-	}
-
-	if(strstr((char*)dataFromBuffer,&dataToFind[0])==NULL){
-		return;
-	}
-	this->parent->clearUartData();
-	ESP8266SetPassthroughMode *nextState=new ESP8266SetPassthroughMode(ESP8266State::parent);
-	this->parent->ChangeState(nextState);
-
+const uint8_t* ESP8266ConnectToTCPServer::getInitialData(uint32_t *size){
+	*size=sizeof(stringWifiConntectToServer)/sizeof(stringWifiConntectToServer[0])-1;
+	return (const uint8_t*)&stringWifiConntectToServer[0];
 }
-
-
+bool ESP8266ConnectToTCPServer::readyToSendInit(int time){
+	if(time>COMMUNICATION_TEST_TIME_TO_REINIT*4){
+		return true;
+	}else{
+		return false;
+	}
+}

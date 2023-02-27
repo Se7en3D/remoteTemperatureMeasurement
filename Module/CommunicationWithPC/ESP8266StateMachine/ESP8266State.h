@@ -9,27 +9,23 @@
 #define COMMUNICATIONWITHPC_ESP8266STATEMACHINE_ESP8266STATE_H_
 #include <stdio.h>
 #include <vector>
-#include <CommunicationWithPC/WifiESP8266ATCom.h>
+#include <string>
+#include "ESP8266Definitions.h"
 #define PARENT_NO_SET_ERROR -1
 #define COMMUNICATION_TEST_TIME_TO_REINIT 500 /*!<Czas do ponownego wysłania komendy w stanie testu komunikacji*/
 #define MAX_ESP8266STATE_SIZE 100
 class WifiESP8266ATCom;
 
 class ESP8266State {
-private:
-	 uint32_t time;
 protected:
-	 WifiESP8266ATCom *parent=nullptr;
-	 inline uint32_t getTime(){return time;}
-	 inline void resetTime(){this->time=0;}
-	 int sendUartData(uint8_t *data,uint32_t size);
 public:
-	ESP8266State(WifiESP8266ATCom *parent);
+	ESP8266State();
 	virtual ~ESP8266State();
-	virtual int initial()=0;
-	virtual void main()=0;
 	virtual bool readyToSend();
-	void timerInterrupt();
+	virtual ESP8266State* getNextState(std::string &buffer)=0;
+	virtual const uint8_t* getInitialData(uint32_t *size)=0;
+	virtual bool readyToSendInit(int time)=0;
+	virtual inline ESP8266::stateName getStateName();
 };
 
 
