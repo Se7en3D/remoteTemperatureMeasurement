@@ -26,11 +26,12 @@
 #include "CommunicationWithPC/Freames/FramesHTTPRequestsCreator.h"
 #include "CommunicationWithPC/Freames/Decode/FramesDecoder.h"
 #include "CommunicationWithPC/Freames/Decode/FramesDecoderRest.h"
+#include "Controller/CommController.h"
 #include "GlobalData.h"
 #include <stdio.h>
 #include <string>
 
-FramesCreator *framesCreator=new FramesHTTPRequestsCreator();
+CommController *comController=nullptr;
 DS18B20 *ds18b20=nullptr;
 ComWithPC *com=nullptr;
 volatile bool startFlag=false;
@@ -40,6 +41,7 @@ volatile uint8_t huart4RxData;
 void newMain(){
 		//
 	FramesDecoder *framesDecoder=new FramesDecoderRest();
+	FramesCreator *framesCreator=new FramesHTTPRequestsCreator();
 		//Read Unique device ID
 	stm32UniqueDeviceID.id[0]=*(STM32F4_SYSCFG::UID31_0);
 	stm32UniqueDeviceID.id[1]=*(STM32F4_SYSCFG::UID63_32);
@@ -55,20 +57,11 @@ void newMain(){
 	HAL_TIM_Base_Start_IT(&htim11);
 	com=new WifiESP8266ATCom(&huart4,WIFIESP8266RESET_GPIO_Port,WIFIESP8266RESET_Pin);
 	HAL_UART_Receive_IT(&huart4,(uint8_t*) &huart4RxData, sizeof(huart4RxData));
+	comController=new CommController(com,framesCreator,framesDecoder,20);
 	  	  //Loop
 	bool statusLed=false;
 	while(true){
-		std::string readFrame;
-		if(com->GetResponse(&readFrame)==0){
-			DecodedFrame decodedFrame;
-			if(framesDecoder->decodeFrame(readFrame, &decodedFrame)==0){
-				printf("Kod statusu=%d\r\n",decodedFrame.StatusCode);
-			}else{
-				printf("Nie odkodowano dane:\r\n");
-				printf("%s\r\n",readFrame.c_str());
-			}
-			//printf("%s\r\n",readFrame.c_str());
-		}
+
 		if(time>=10){
 			time=0;
 			printf("Pomiar\r\n");
@@ -85,10 +78,12 @@ void newMain(){
 		int temperatures[50]{0};
 		int returnValue=ds18b20->GetTempValue(&temperatures[0],50);
 		if(returnValue>0){
-			std::string tempFrame=framesCreator->creatingTemperaturesTransmissionFrame(temperatures, returnValue);
+			comController->addTempFrame(&temperatures[0], returnValue);
+			//std::string tempFrame=framesCreator->creatingTemperaturesTransmissionFrame(temperatures, returnValue);
 			//tempFrame.append("\r\n");
-			com->SendData((uint8_t*)tempFrame.c_str(), tempFrame.size());
+			//com->SendData((uint8_t*)tempFrame.c_str(), tempFrame.size());
 		}
+		comController->main();
 		com->Main();
 		if(huart4.RxState==HAL_UART_STATE_READY){
 			HAL_UART_Receive_IT(&huart4,(uint8_t*) &huart4RxData, sizeof(huart4RxData));
@@ -117,6 +112,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		}
 		if(ds18b20!=nullptr){
 			ds18b20->TimeHandler();
+		}
+		if(comController!=nullptr){
+			comController->timerInterrupt(1);
 		}
 		//wiFiClass->increaseSysTick(wiFiClass);
 	}
