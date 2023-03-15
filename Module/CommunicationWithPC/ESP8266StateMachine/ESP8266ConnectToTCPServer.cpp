@@ -40,3 +40,7 @@ bool ESP8266ConnectToTCPServer::readyToSendInit(int time){
 		return false;
 	}
 }
+
+ESP8266::stateName ESP8266ConnectToTCPServer::getStateName(){
+	return ESP8266::connectToTCPServer;
+}

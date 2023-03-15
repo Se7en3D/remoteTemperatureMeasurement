@@ -38,3 +38,6 @@ bool ESP8266SetMode::readyToSendInit(int time){
 	}
 }
 
+ESP8266::stateName ESP8266SetMode::getStateName(){
+	return ESP8266::setMode;
+}

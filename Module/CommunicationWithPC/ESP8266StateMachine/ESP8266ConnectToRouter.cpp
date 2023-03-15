@@ -36,3 +36,6 @@ bool ESP8266ConnectToRouter::readyToSendInit(int time){
 		return false;
 	}
 }
+ESP8266::stateName ESP8266ConnectToRouter::getStateName(){
+	return ESP8266::connectToRouter;
+}

@@ -17,6 +17,7 @@ public:
 	const uint8_t* getInitialData(uint32_t *size) override;
 	bool readyToSendInit(int time) override;
 	bool readyToSend() override;
+	inline ESP8266::stateName getStateName() override;
 private:
 	static constexpr char dataClosed[]="CLOSED";
 	static constexpr char dataWifiDisconnect[]="WIFI DISCONNECT";

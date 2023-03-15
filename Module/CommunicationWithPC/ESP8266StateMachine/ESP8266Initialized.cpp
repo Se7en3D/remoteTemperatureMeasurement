@@ -21,25 +21,6 @@ ESP8266Initialized::ESP8266Initialized(){
 ESP8266Initialized::~ESP8266Initialized(){
 }
 
-//int ESP8266Initialized::initial(){
-//	return -1;
-//}
-//
-//void ESP8266Initialized::main(){
-//	if(this->parent==nullptr){
-//		return;
-//	}
-//	const char *dataFromBuffer=nullptr;
-//	int bufferSize=0;
-//	dataFromBuffer=this->parent->getUartData(&bufferSize);
-//	if(bufferSize>0){
-//		if(strstr(dataFromBuffer,"CLOSED")>0 || strstr(dataFromBuffer,"WIFI DISCONNECT")>0){
-//			ESP8266CheckCIPSTATUS *nextState=new ESP8266CheckCIPSTATUS(ESP8266State::parent);
-//			this->parent->ChangeState(nextState);
-//			this->parent->clearUartData();
-//		}
-//	}
-//}
 ESP8266State* ESP8266Initialized::getNextState(std::string &buffer){
 	if(buffer.find(dataClosed)!=std::string::npos || buffer.find(dataWifiDisconnect)!=std::string::npos ){
 		return new ESP8266CheckCIPSTATUS();
@@ -55,4 +36,7 @@ bool ESP8266Initialized::readyToSendInit(int time){
 }
 inline bool ESP8266Initialized::readyToSend(){
 	return true;
+}
+ESP8266::stateName ESP8266Initialized::getStateName(){
+	return ESP8266::initialized;
 }

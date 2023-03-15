@@ -42,3 +42,6 @@ bool ESP8266CommunicationTest::readyToSendInit(int time){
 		return false;
 	}
 }
+ESP8266::stateName ESP8266CommunicationTest::getStateName(){
+	return ESP8266::communicationTest;
+}

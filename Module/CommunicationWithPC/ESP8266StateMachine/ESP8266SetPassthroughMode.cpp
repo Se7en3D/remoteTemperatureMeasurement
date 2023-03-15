@@ -20,34 +20,6 @@ ESP8266SetPassthroughMode::ESP8266SetPassthroughMode(){
 }
 ESP8266SetPassthroughMode::~ESP8266SetPassthroughMode(){
 }
-//int ESP8266SetPassthroughMode::initial(){
-//	return this->sendUartData((uint8_t*)stringWifiModePassthrough, sizeof(stringWifiModePassthrough)-1);
-//
-//}
-//void ESP8266SetPassthroughMode::main(){
-//	if(this->parent==nullptr){
-//		return;
-//	}
-//	if(this->getTime()>COMMUNICATION_TEST_TIME_TO_REINIT){
-//		this->initial();
-//	}
-//
-//	char dataToFind[]="OK";
-//	const char *dataFromBuffer=nullptr;
-//	int bufferSize=0;
-//	dataFromBuffer=this->parent->getUartData(&bufferSize);
-//
-//	if(bufferSize<=0 || dataFromBuffer==nullptr){
-//		return;
-//	}
-//
-//	if(strstr((char*)dataFromBuffer,&dataToFind[0])==NULL){
-//		return;
-//	}
-//	this->parent->clearUartData();
-//	ESP8266Initialized *nextState=new ESP8266Initialized(ESP8266State::parent);
-//	this->parent->ChangeState(nextState);
-//}
 ESP8266State* ESP8266SetPassthroughMode::getNextState(std::string &buffer){
 	if(buffer.find(dataToFind)==std::string::npos){
 		return nullptr;
@@ -64,4 +36,7 @@ bool ESP8266SetPassthroughMode::readyToSendInit(int time){
 	}else{
 		return false;
 	}
+}
+ESP8266::stateName ESP8266SetPassthroughMode::getStateName(){
+	return ESP8266::setPasshroughMode;
 }

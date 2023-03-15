@@ -12,10 +12,21 @@ TEST(ESP8266StateTest,ESP8266CheckCIPSTATUSNextStates){
     std::string stringStatus5{"OK\r\n STATUS:5"};
     std::string stringStatus6{"OK\r\n STATUS:6"};
     std::string stringwithEmptyStatus{"OK\r\n"};
+    std::string stringwithEmptyData{"EASDFASD\r\n"};
     ESP8266State* nextState=esp8266CheckCIPSTATUS.getNextState(stringStatus0);
-    ASSERT_EQ(nextState,nullptr);
+    ASSERT_NE(nextState,nullptr);
+    ASSERT_EQ(nextState->getStateName(),ESP8266::checkCIPSTATUS);
+    delete nextState;
+
+    for(int i=0;i<50;i++){
+        nextState=esp8266CheckCIPSTATUS.getNextState(stringwithEmptyData);
+        ASSERT_EQ(nextState,nullptr);
+    }
+
     nextState=esp8266CheckCIPSTATUS.getNextState(stringStatus1);
-    ASSERT_EQ(nextState,nullptr);
+    ASSERT_NE(nextState,nullptr);
+    ASSERT_EQ(nextState->getStateName(),ESP8266::checkCIPSTATUS);
+    delete nextState;
     
     nextState=esp8266CheckCIPSTATUS.getNextState(stringStatus2);
     ASSERT_NE(nextState,nullptr);
@@ -33,10 +44,12 @@ TEST(ESP8266StateTest,ESP8266CheckCIPSTATUSNextStates){
     delete nextState;
 
     nextState=esp8266CheckCIPSTATUS.getNextState(stringStatus6);
-    ASSERT_EQ(nextState,nullptr);
+    ASSERT_NE(nextState,nullptr);
+    ASSERT_EQ(nextState->getStateName(),ESP8266::checkCIPSTATUS);
+    delete nextState;
 
     nextState=esp8266CheckCIPSTATUS.getNextState(stringwithEmptyStatus);
     ASSERT_NE(nextState,nullptr);
     ASSERT_EQ(nextState->getStateName(),ESP8266::checkCIPSTATUS);
-
+    delete nextState;
 }

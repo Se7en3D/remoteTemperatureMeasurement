@@ -23,7 +23,6 @@ public:
 	 */
 	void sendData(const uint8_t* data,uint32_t size);
 
-
 private:
 	enum class sendDataStatus{
 		noInitialized,

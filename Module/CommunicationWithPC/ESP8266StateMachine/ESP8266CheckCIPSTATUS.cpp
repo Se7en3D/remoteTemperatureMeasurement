@@ -51,7 +51,7 @@ ESP8266State* ESP8266CheckCIPSTATUS::getNextState(std::string &buffer){
 			return new ESP8266SetMode();
 			break;
 		default:
-			printf("CIPSTATUS nieznana wartość %d",static_cast<int>(tempChar));
+			printf("CIPSTATUS nieznana wartość %c\n",tempChar);
 			break;
 	}
 	return new ESP8266CheckCIPSTATUS();;
@@ -67,6 +67,6 @@ bool ESP8266CheckCIPSTATUS::readyToSendInit(int time){
 		return false;
 	}
 }
-inline ESP8266::stateName ESP8266CheckCIPSTATUS::getStateName(){
+ESP8266::stateName ESP8266CheckCIPSTATUS::getStateName(){
 	return ESP8266::checkCIPSTATUS;
 }
