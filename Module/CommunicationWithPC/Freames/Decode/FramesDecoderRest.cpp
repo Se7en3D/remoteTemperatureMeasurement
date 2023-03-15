@@ -29,13 +29,10 @@ int FramesDecoderRest::decodeFrame(std::string &inputFrame,DecodedFrame* decoded
 			decodedFrame->type=getMessageType(&httpFrame);
 			switch(decodedFrame->type){
 			case decodedFrameType::onlyCode:
-				//printf("Znaleziono tylko kod\r\n");
 				break;
 			case decodedFrameType::setTime:
-				//printf("Znaleziono setTime\r\n");
 				break;
 			default:
-				//printf("Nic nie znaleziono\r\n");
 				break;
 			}
 			return 0;
@@ -44,9 +41,6 @@ int FramesDecoderRest::decodeFrame(std::string &inputFrame,DecodedFrame* decoded
 		if(httpFrame.type==httpMessageType::REQUEST){
 			return -1;
 		}
-
-	}else{
-		//printf("Nie odebrano poprawnej ramki\r\n");
 	}
 
 	return -1;

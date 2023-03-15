@@ -1,3 +1,6 @@
 /Debug/
+/Build/
+/.vscode/
 /Release/
 /GoogleTest/
+/Test/include/

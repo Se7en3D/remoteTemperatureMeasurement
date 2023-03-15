@@ -6,7 +6,7 @@
  */
 
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266State.h>
-#include <CommunicationWithPC/WifiESP8266ATCom.h>
+//#include <CommunicationWithPC/WifiESP8266ATCom.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266CheckCIPSTATUS.h>
 #include <iostream>
 #include <algorithm>

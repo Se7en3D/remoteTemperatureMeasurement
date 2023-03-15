@@ -11,6 +11,7 @@
 #include "CommunicationWithPC/Freames/FramesCreator.h"
 #include "CommunicationWithPC/Freames/Decode/FramesDecoder.h"
 #include <list>
+
 class CommController {
 public:
 	CommController(ComWithPC *comWithPC,FramesCreator *framesCreator,FramesDecoder *framesDecoder,uint32_t maxTempBuffer);

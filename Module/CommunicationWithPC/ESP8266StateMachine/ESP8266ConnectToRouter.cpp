@@ -7,7 +7,7 @@
 
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266ConnectToRouter.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266ConnectToTCPServer.h>
-#include <CommunicationWithPC/WifiESP8266ATCom.h>
+//#include <CommunicationWithPC/WifiESP8266ATCom.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266Definitions.h>
 #include <iostream>
 #include <algorithm>

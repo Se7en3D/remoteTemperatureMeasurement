@@ -30,11 +30,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>ContentType</name>
-			<type>2</type>
-			<location>D:/Projekty/STM32CubeIDE/workspace_1.5.1/TempSensServer/Src/REST/ContentType</location>
-		</link>
-	</linkedResources>
 </projectDescription>

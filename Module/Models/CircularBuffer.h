@@ -23,7 +23,7 @@ public:
 //	CircularBuffer& operator=(CircularBuffer &&other);
 	bool addData(type data){
 			uint32_t nextAddPosition=this->addPosition+1;
-			if(nextAddPosition>=size){
+			if(nextAddPosition>size){
 				nextAddPosition=0;
 			}
 			if(nextAddPosition==readPosition){
@@ -35,7 +35,7 @@ public:
 	}
 	bool getData(type *data){
 			uint32_t nextReadPosition=this->readPosition+1;
-			if(nextReadPosition>=size){
+			if(nextReadPosition>size){
 				nextReadPosition=0;
 			}
 			if(this->readPosition==addPosition){

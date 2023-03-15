@@ -10,7 +10,7 @@
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266ConnectToTCPServer.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266SetMode.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266Initialized.h>
-#include <CommunicationWithPC/WifiESP8266ATCom.h>
+//#include <CommunicationWithPC/WifiESP8266ATCom.h>
 #include <CommunicationWithPC/ESP8266StateMachine/ESP8266Definitions.h>
 #include <iostream>
 #include <algorithm>
@@ -35,9 +35,9 @@ ESP8266State* ESP8266CheckCIPSTATUS::getNextState(std::string &buffer){
 	signPosition+=(sizeof(statusSigns)/sizeof(statusSigns[0])-1);
 	char tempChar=buffer.at(signPosition);
 	switch(tempChar){
-		case '1':
-			return new ESP8266ConnectToRouter();
-			break;
+		// case '1':
+		// 	return new ESP8266ConnectToRouter();
+		// 	break;
 		case '2':
 			return new ESP8266ConnectToTCPServer();
 			break;
@@ -51,6 +51,7 @@ ESP8266State* ESP8266CheckCIPSTATUS::getNextState(std::string &buffer){
 			return new ESP8266SetMode();
 			break;
 		default:
+			printf("CIPSTATUS nieznana wartość %d",static_cast<int>(tempChar));
 			break;
 	}
 	return new ESP8266CheckCIPSTATUS();;
@@ -65,4 +66,7 @@ bool ESP8266CheckCIPSTATUS::readyToSendInit(int time){
 	}else{
 		return false;
 	}
+}
+inline ESP8266::stateName ESP8266CheckCIPSTATUS::getStateName(){
+	return ESP8266::checkCIPSTATUS;
 }

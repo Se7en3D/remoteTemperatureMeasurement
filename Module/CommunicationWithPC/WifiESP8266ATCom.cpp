@@ -33,7 +33,6 @@ int WifiESP8266ATCom::Initialized(){
 }
 void WifiESP8266ATCom::Main(){
 	if(this->state==nullptr){
-		printf("nextState is null\r\n");
 		return;
 	}
 	uint8_t tempBuffer;
@@ -146,12 +145,6 @@ void WifiESP8266ATCom::findIPDMessage(){
 		}
 		this->ipdMessage.append(this->uartReceivedBuffer.substr(0,sizeToCopy));
 		this->ipdSize-=sizeToCopy;
-		//printf("STC=%d IZ=%d\r\n",sizeToCopy,this->ipdSize);
-		if(this->ipdSize<0){
-			printf("ipdSize=%d",this->ipdSize);
-			//printf("%s\r\n",this->ipdMessage.c_str());
-			//this->ipdMessage.clear();
-		}
 		this->uartReceivedBuffer.erase(0,sizeToCopy);
 	}else{
 		size_t ipdStartPosition=this->uartReceivedBuffer.find(ipdStart);
@@ -182,7 +175,6 @@ void WifiESP8266ATCom::findIPDMessage(){
 			this->ipdMessage.clear();
 		}
 		if(this->ipdSize>0){
-			printf("ipdSize=%d\r\n",this->ipdSize);
 			this->findIPDMessage();
 		}
 

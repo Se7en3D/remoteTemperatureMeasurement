@@ -16,6 +16,7 @@ public:
 	ESP8266State* getNextState(std::string &buffer) override;
 	const uint8_t* getInitialData(uint32_t *size) override;
 	bool readyToSendInit(int time) override;
+	inline ESP8266::stateName getStateName();
 private:
 	static constexpr char dataToFind[]="OK";
 	static constexpr char statusSigns[]="STATUS:";

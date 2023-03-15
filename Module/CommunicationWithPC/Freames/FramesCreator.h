@@ -7,7 +7,7 @@
 
 #ifndef COMMUNICATIONWITHPC_FRAMESCREATOR_H_
 #define COMMUNICATIONWITHPC_FRAMESCREATOR_H_
-#include <String>
+#include <string>
 class FramesCreator {
 protected:
 	std::string targetUrl;

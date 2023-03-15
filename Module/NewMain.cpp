@@ -52,7 +52,6 @@ void newMain(){
 	ds18b20=new DS18B20();
 	ds18b20->SetCommunication(oneWire);
 	ds18b20->Initialize();
-	ds18b20->StartOfMeasurment();
 	HAL_TIM_Base_Start_IT(&htim10);
 	HAL_TIM_Base_Start_IT(&htim11);
 	com=new WifiESP8266ATCom(&huart4,WIFIESP8266RESET_GPIO_Port,WIFIESP8266RESET_Pin);
